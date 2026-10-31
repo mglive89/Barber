@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="it"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16191d">
+<meta name="description" content="Analisi del viso e consigli di taglio e colore per barbershop e parrucchiere.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Specchio">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}</style>
+</head><body>
+<title>Specchio Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: postazione salone. Specchio a sinistra (immagine, prova colore), scheda consulenza a destra; su telefono si impilano. */
+:root{
+  --bg:#f3f2ef; --surface:#ffffff; --ink:#1d2126; --muted:#5f6670; --line:#dcdad4;
+  --brass:#a3702c; --brass-soft:#f1e5d1; --stage:#16191d; --good:#2f7d55; --warn:#a1452a;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Figtree",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121417; --surface:#1b1f24; --ink:#eceae5; --muted:#9aa1aa; --line:#2d333a;
+  --brass:#d9a35a; --brass-soft:#3a2f20; --stage:#0b0d0f; --good:#5cbf8a; --warn:#e2805f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121417; --surface:#1b1f24; --ink:#eceae5; --muted:#9aa1aa; --line:#2d333a;
+  --brass:#d9a35a; --brass-soft:#3a2f20; --stage:#0b0d0f; --good:#5cbf8a; --warn:#e2805f; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 40px}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand img{width:44px;height:44px;border-radius:10px;object-fit:contain;background:var(--surface);border:1px solid var(--line)}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:-.02em;margin:0;line-height:1.1}
+.brand small{display:block;color:var(--muted);font-size:12px;letter-spacing:.02em}
+nav{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tab{border:1px solid transparent;background:transparent;color:var(--muted);font:600 14px var(--f-body);padding:8px 14px;border-radius:10px;cursor:pointer}
+.tab[aria-current="page"]{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 14px var(--f-body);padding:7px 14px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:16px;align-items:start}
+@media (max-width:880px){.grid{grid-template-columns:1fr}}
+.stage{background:var(--stage);border-radius:18px;overflow:hidden;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);color:#eceae5}
+@media (max-width:880px){.stage{position:static}}
+.stage-tabs{display:flex;gap:4px;padding:10px 10px 0}
+.stage-tabs button{flex:1;border:0;border-radius:9px;padding:8px;background:transparent;color:#9aa1aa;font:600 13px var(--f-body);cursor:pointer}
+.stage-tabs button[aria-pressed="true"]{background:#2a3037;color:#fff}
+.stage-tabs button:disabled{opacity:.4;cursor:not-allowed}
+.mirror{position:relative;aspect-ratio:3/4;max-width:100%;margin:10px;border-radius:12px;overflow:hidden;background:#0d0f12;touch-action:none}
+.mirror canvas{width:100%;height:100%;display:block}
+.mirror video{display:none}
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#c9ccd1;text-align:center;padding:24px}
+.empty svg{opacity:.55}
+.empty p{margin:0;max-width:30ch;font-size:14px}
+.quality{position:absolute;left:10px;right:10px;top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.q{font:500 11.5px var(--f-mono);padding:4px 8px;border-radius:999px;background:rgba(10,12,14,.72);color:#eceae5;display:inline-flex;gap:6px;align-items:center}
+.q::before{content:"";width:8px;height:8px;border-radius:50%;background:#7c838c}
+.q.ok::before{background:#5cbf8a}.q.mid::before{background:#e0b54a}.q.bad::before{background:#e2805f}
+.tools{display:flex;flex-direction:column;gap:8px;padding:0 14px 6px}
+.tools label{display:flex;align-items:center;gap:10px;font-size:13px;color:#c9ccd1}
+.tools input[type=range]{flex:1;accent-color:#d9a35a}
+.controls{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;border-top:1px solid #2a2f36}
+.btn{font:600 14px var(--f-body);border-radius:10px;padding:10px 14px;border:1px solid #3a4048;background:#22272d;color:#eceae5;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:#d9a35a;border-color:#d9a35a;color:#14110c}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.status{padding:0 14px 14px;color:#9aa1aa;font:12px var(--f-mono)}
+.status.err{color:#e2805f}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.eyebrow{font:500 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.example{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--brass);background:var(--brass-soft);padding:3px 8px;border-radius:6px;align-self:flex-start}
+h2{font-family:var(--f-display);font-weight:700;font-size:30px;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:500;font-size:19px;margin:0}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted);min-width:0}
+.field input,.field textarea,.field select{font:15px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 11px;width:100%}
+.field textarea{min-height:76px;resize:vertical}
+.shape-head{display:flex;gap:16px;align-items:center}
+.shape-head svg{flex:none}
+.shape-head p{margin:4px 0 0;color:var(--muted);max-width:52ch}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--ink);font:500 13px var(--f-body);padding:6px 11px;border-radius:999px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip[aria-pressed="true"]{border-color:var(--brass);background:var(--brass-soft)}
+.chip small{font-family:var(--f-mono);color:var(--muted);font-size:11px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.metric{border-top:1px solid var(--line);padding-top:8px}
+.metric b{display:block;font:500 18px var(--f-mono);font-variant-numeric:tabular-nums}
+.metric span{font-size:12px;color:var(--muted)}
+.traits{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.trait{display:flex;gap:10px;align-items:center}
+.dot{width:38px;height:38px;border-radius:50%;flex:none;border:1px solid var(--line)}
+.trait div{min-width:0}
+.trait strong{display:block;font-weight:600}
+.trait span{font-size:12px;color:var(--muted)}
+.cuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.cut{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.cut[aria-pressed="true"]{border-color:var(--brass);box-shadow:0 0 0 2px var(--brass);background:var(--brass-soft)}
+.cut strong{font-weight:600}
+.cut p{margin:0;color:var(--muted);font-size:13.5px}
+.cut .tag{font:500 11px var(--f-mono);color:var(--good);letter-spacing:.04em}
+.cut[aria-pressed="true"] .tag{color:var(--brass)}
+div.cut{cursor:default}
+.avoid{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.avoid li{display:flex;gap:8px;font-size:14px}
+.avoid li::before{content:"✕";color:var(--warn);font-weight:700}
+.palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
+.swatch{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:transparent;padding:0;text-align:left;color:var(--ink);cursor:pointer;font:inherit}
+.swatch i{display:block;height:54px}
+.swatch span{display:block;padding:7px 9px;font-size:13px;font-weight:500;line-height:1.3}
+.swatch span small{display:block;font:11px var(--f-mono);color:var(--muted)}
+.swatch[aria-pressed="true"]{border-color:var(--brass);box-shadow:0 0 0 2px var(--brass)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.ghost{font:600 13.5px var(--f-body);border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:9px 13px;cursor:pointer}
+.solid{font:600 13.5px var(--f-body);border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:10px;padding:9px 13px;cursor:pointer}
+.danger{color:var(--warn);border-color:var(--warn)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px}
+.check input{margin-top:3px;accent-color:var(--brass)}
+.toast{font-size:13px;color:var(--good);margin:0}
+.toast.err{color:var(--warn)}
+.search{display:flex;gap:8px;flex-wrap:wrap}
+.search input{flex:1;min-width:0;font:15px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.clients{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.client{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;cursor:pointer;text-align:left;color:var(--ink);font:inherit}
+.client img,.client .ph{width:64px;height:80px;border-radius:9px;object-fit:cover;flex:none;background:var(--bg)}
+.client div{min-width:0}
+.client strong{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.client span{display:block;font-size:12.5px;color:var(--muted)}
+.detail{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:16px}
+.pics2{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start}
+.pics2 figure{margin:0;display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+@media (max-width:640px){.detail{grid-template-columns:1fr}}
+.detail img{width:100%;border-radius:12px}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;font-size:14px;margin:0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;min-width:0}
+.logo-prev{width:72px;height:72px;border-radius:12px;border:1px dashed var(--line);object-fit:contain;background:var(--bg)}
+.overlay{position:fixed;inset:0;background:rgba(10,12,14,.6);display:grid;place-items:center;z-index:50;padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px))}
+.overlay .card{max-width:520px;max-height:90vh;overflow:auto}
+#printSheet{display:none}
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff;color:#111;padding:0}
+  .wrap,.overlay{display:none!important}
+  #printSheet{display:block;font:11pt var(--f-body);color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printSheet h1{font:700 20pt var(--f-display);margin:0}
+  #printSheet h2{font:600 13pt var(--f-display);margin:14px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px}
+  #printSheet .ph{display:flex;gap:14px;align-items:center;border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:10px}
+  #printSheet .ph img{width:56px;height:56px;object-fit:contain}
+  #printSheet .pics{display:flex;gap:10px}
+  #printSheet .pics img{width:48mm;border-radius:4px}
+  #printSheet figcaption{font-size:9pt;color:#444}
+  #printSheet .sw{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:4px;border:1px solid #999}
+  #printSheet ul{margin:4px 0;padding-left:18px}
+  #printSheet .foot{margin-top:18px;font-size:8.5pt;color:#555}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><img id="brandLogo" alt="" hidden><div><h1 id="brandName">Specchio Studio</h1><small id="brandSub">Consulenza taglio e colore</small></div></div>
+    <nav aria-label="Sezioni">
+      <button class="tab" data-view="consulenza" aria-current="page">Consulenza</button>
+      <button class="tab" data-view="clienti">Clienti</button>
+      <button class="tab" data-view="impostazioni">Impostazioni</button>
+      <button class="ghost" id="installBtn" hidden>Installa app</button>
+    </nav>
+  </header>
+  <p class="note" id="iosHint" hidden style="background:var(--brass-soft);padding:8px 12px;border-radius:10px">Per installare su iPhone o iPad: tocca Condividi, poi «Aggiungi alla schermata Home».</p>
+
+  <main id="v-consulenza" class="grid">
+    <section class="stage" aria-label="Specchio">
+      <div class="stage-tabs" role="group" aria-label="Vista">
+        <button id="mAnalisi" aria-pressed="true">Analisi viso</button>
+        <button id="mColore" aria-pressed="false" disabled>Prova colore</button>
+        <button id="mFoto" aria-pressed="false">Foto pulita</button>
+      </div>
+      <div class="mirror" id="mirror">
+        <canvas id="cv" width="720" height="960"></canvas>
+        <video id="vid" playsinline muted></video>
+        <div class="quality" id="quality" hidden>
+          <span class="q" id="qPose">Posa</span><span class="q" id="qLight">Luce</span><span class="q" id="qDist">Distanza</span>
+        </div>
+        <div class="empty" id="empty">
+          <svg width="74" height="90" viewBox="0 0 74 90" fill="none" stroke="#c9ccd1" stroke-width="2"><ellipse cx="37" cy="45" rx="30" ry="40"/><path d="M22 38h8M44 38h8M37 42v12M28 64q9 7 18 0"/></svg>
+          <p>Cliente seduto di fronte, viso scoperto (capelli dietro le orecchie), luce frontale bianca. Usa la fotocamera o carica una foto.</p>
+        </div>
+      </div>
+      <div class="tools" id="colorTools" hidden>
+        <label for="intensity">Intensità <input type="range" id="intensity" min="20" max="100" value="75"></label>
+        <label for="split">Prima / dopo <input type="range" id="split" min="0" max="100" value="100"></label>
+      </div>
+      <div class="controls">
+        <button class="btn primary" id="camBtn">Avvia fotocamera</button>
+        <button class="btn" id="snapBtn" disabled>Scatta e analizza</button>
+        <label class="btn" for="file">Carica foto</label>
+        <input type="file" id="file" accept="image/*" hidden>
+      </div>
+      <div class="status" id="status">Caricamento modelli di riconoscimento…</div>
+    </section>
+
+    <section class="col">
+      <div class="card">
+        <div class="row"><div class="eyebrow">Cliente</div>
+          <div class="seg" role="group" aria-label="Servizio">
+            <button id="gM" aria-pressed="true">Uomo</button>
+            <button id="gF" aria-pressed="false">Donna</button>
+          </div>
+        </div>
+        <div class="fields">
+          <label class="field" for="cNome">Nome e cognome<input id="cNome" autocomplete="off" placeholder="Es. Luca Bianchi"></label>
+          <label class="field" for="cTel">Telefono<input id="cTel" inputmode="tel" autocomplete="off" placeholder="Facoltativo"></label>
+        </div>
+      </div>
+      <div class="col" id="report" aria-live="polite"></div>
+      <div class="card">
+        <div class="eyebrow">Chiudi la consulenza</div>
+        <label class="field" for="cNote">Note per il cliente o per il collega<textarea id="cNote" placeholder="Es. formula colore, prodotti consigliati, prossimo appuntamento"></textarea></label>
+        <label class="check" for="cConsent"><input type="checkbox" id="cConsent"> <span>Il cliente acconsente a salvare la sua foto in archivio su questo dispositivo.</span></label>
+        <div class="actions">
+          <button class="solid" id="saveBtn">Salva in archivio</button>
+          <button class="ghost" id="printBtn">Stampa / PDF</button>
+          <button class="ghost" id="copyBtn">Copia testo</button>
+          <button class="ghost" id="newBtn">Nuova consulenza</button>
+        </div>
+        <p class="toast" id="saveMsg" role="status"></p>
+      </div>
+    </section>
+  </main>
+
+  <main id="v-clienti" class="col" hidden>
+    <div class="search">
+      <input id="q" type="search" placeholder="Cerca per nome o telefono" aria-label="Cerca cliente">
+      <button class="ghost" id="exportBtn">Esporta backup</button>
+      <label class="ghost" for="importFile">Importa backup</label>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+    <p class="toast" id="archMsg" role="status"></p>
+    <div id="clientDetail" hidden></div>
+    <div class="clients" id="clientList"></div>
+  </main>
+
+  <main id="v-impostazioni" class="col" hidden>
+    <div class="card">
+      <div class="eyebrow">Il tuo salone</div>
+      <p class="note">Nome e logo compaiono in alto e sulla scheda stampata per il cliente.</p>
+      <div class="fields">
+        <label class="field" for="sNome">Nome del salone<input id="sNome" placeholder="Es. Barberia Da Marco"></label>
+        <label class="field" for="sTel">Telefono<input id="sTel" inputmode="tel"></label>
+        <label class="field" for="sAddr">Indirizzo<input id="sAddr"></label>
+        <label class="field" for="sWeb">Sito o Instagram<input id="sWeb"></label>
+        <label class="field" for="sTipo">Servizio predefinito
+          <select id="sTipo"><option value="M">Barbershop · uomo</option><option value="F">Parrucchiere · donna</option></select></label>
+      </div>
+      <div class="row" style="justify-content:flex-start">
+        <img class="logo-prev" id="sLogoPrev" alt="Anteprima logo">
+        <label class="ghost" for="sLogo">Carica logo</label><input type="file" id="sLogo" accept="image/*" hidden>
+        <button class="ghost" id="sLogoDel">Rimuovi logo</button>
+      </div>
+      <div class="actions"><button class="solid" id="sSave">Salva impostazioni</button></div>
+      <p class="toast" id="setMsg" role="status"></p>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Privacy</div>
+      <p style="margin:0">Le foto vengono analizzate sul dispositivo: nessuna immagine viene inviata a server esterni. L'archivio clienti resta nella memoria di questo tablet o telefono. Fai un backup regolare dalla sezione Clienti.</p>
+      <p class="note">Per il GDPR chiedi sempre il consenso prima di salvare la foto di un cliente. Senza consenso la scheda si salva senza foto.</p>
+    </div>
+  </main>
+</div>
+
+<div class="overlay" id="privacy" hidden>
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="pvT">
+    <h3 id="pvT">Prima di iniziare</h3>
+    <p style="margin:0">Specchio Studio analizza il viso con un modello che gira <strong>sul dispositivo</strong>. Le foto non lasciano mai questo tablet o telefono.</p>
+    <p style="margin:0">Le consulenze salvate restano in un archivio locale. Prima di salvare la foto di un cliente chiedigli il consenso: c'è un'apposita casella.</p>
+    <p class="note">I consigli sono un supporto al lavoro dello stilista, non lo sostituiscono: la forma del viso è una stima, sempre correggibile a mano.</p>
+    <div class="actions"><button class="solid" id="pvOk">Ho capito</button></div>
+  </div>
+</div>
+
+<div id="printSheet"></div>
+
+<script type="module">
+// ================= Catalogo =================
+const SHAPES = {
+  ovale:{label:"Ovale",desc:"Proporzioni equilibrate, fronte leggermente più larga del mento. Regge quasi ogni taglio.",
+    path:"M50 6 C78 6 88 34 86 58 C84 86 66 114 50 114 C34 114 16 86 14 58 C12 34 22 6 50 6Z"},
+  rotondo:{label:"Rotondo",desc:"Lunghezza e larghezza simili, mandibola morbida. Obiettivo: slanciare con volume in alto e linee verticali.",
+    path:"M50 10 C80 10 92 38 92 62 C92 90 72 110 50 110 C28 110 8 90 8 62 C8 38 20 10 50 10Z"},
+  quadrato:{label:"Quadrato",desc:"Fronte, zigomi e mandibola di larghezza simile, angoli marcati. Obiettivo: ammorbidire con texture e movimento.",
+    path:"M18 10 H82 C88 10 90 14 90 20 V88 C90 102 80 110 66 110 H34 C20 110 10 102 10 88 V20 C10 14 12 10 18 10Z"},
+  allungato:{label:"Allungato",desc:"Il viso è nettamente più lungo che largo. Obiettivo: dare larghezza ai lati ed evitare volume in cima.",
+    path:"M50 2 C74 2 80 28 80 58 C80 92 68 118 50 118 C32 118 20 92 20 58 C20 28 26 2 50 2Z"},
+  cuore:{label:"Cuore",desc:"Fronte e zigomi ampi, mento stretto e affusolato. Obiettivo: bilanciare dando peso alla parte bassa.",
+    path:"M50 112 C40 112 14 80 10 50 C8 26 22 8 50 8 C78 8 92 26 90 50 C86 80 60 112 50 112Z"},
+  diamante:{label:"Diamante",desc:"Zigomi più larghi di fronte e mento. Obiettivo: ammorbidire gli zigomi e allargare fronte o mento.",
+    path:"M50 4 C62 4 70 20 74 34 C82 46 90 56 86 66 C80 88 62 116 50 116 C38 116 20 88 14 66 C10 56 18 46 26 34 C30 20 38 4 50 4Z"},
+  triangolo:{label:"Triangolo",desc:"Mandibola più larga della fronte. Obiettivo: dare volume alla parte alta e alle tempie.",
+    path:"M50 8 C68 8 74 18 78 34 C84 56 92 80 86 96 C80 108 66 112 50 112 C34 112 20 108 14 96 C8 80 16 56 22 34 C26 18 32 8 50 8Z"},
+};
+const CUTS = {
+  ovale:{
+    M:[["Pompadour moderno","Volume morbido in alto con sfumatura ai lati: valorizza le proporzioni già bilanciate."],
+       ["Side part classico","Riga laterale netta e lati a forbice o fade basso, elegante e versatile."],
+       ["Crew cut","Corto e pulito, bassa manutenzione, mostra la struttura del viso."],
+       ["Slick back","Pettinato all'indietro con prodotto: il viso ovale lo sostiene senza squilibri."]],
+    F:[["Lob (bob lungo)","Taglio tra mento e spalle, liscio o mosso: incornicia senza alterare le proporzioni."],
+       ["Scalato lungo con onde","Strati morbidi che danno movimento a lunghezze importanti."],
+       ["Pixie","Corto e deciso: sul viso ovale funziona perché le proporzioni sono già equilibrate."],
+       ["Frangia a tendina","Aperta al centro, ammorbidisce lo sguardo e si adatta a ogni lunghezza."]],
+    avoidM:["Frangia piena e pesante che copre tutta la fronte e accorcia il viso"],
+    avoidF:["Volumi eccessivi sulla sommità che allungano troppo il viso"],
+    beard:"Quasi tutte le barbe funzionano: stubble curato o barba corta squadrata leggermente."},
+  rotondo:{
+    M:[["Quiff con high fade","Lati molto corti e volume verticale in alto: slancia e crea angoli."],
+       ["Faux hawk","Centro più lungo e alzato, lati corti: allunga otticamente."],
+       ["Undercut con riga laterale","Contrasto netto tra lati e sopra, linea asimmetrica che rompe la rotondità."],
+       ["Taglio asimmetrico texturizzato","Ciuffo spostato su un lato con texture, evita la simmetria del cerchio."]],
+    F:[["Lob asimmetrico","Più lungo davanti e oltre il mento: crea linee verticali."],
+       ["Scalato lungo con volume in alto","Lunghezze sotto le spalle, strati che partono dal mento in giù."],
+       ["Pixie con ciuffo alto","Corto ai lati e volume sulla sommità per slanciare."],
+       ["Riga laterale profonda","Spostare il volume su un lato rompe la simmetria tonda."]],
+    avoidM:["Buzz cut uniforme","Frangia dritta","Volume ai lati sopra le orecchie"],
+    avoidF:["Bob tondo all'altezza delle guance","Frangia piena dritta","Ricci voluminosi solo ai lati"],
+    beard:"Barba più lunga sul mento (a punta, Van Dyke o goatee esteso) e più corta sulle guance per allungare."},
+  quadrato:{
+    M:[["French crop texturizzato","Frangia corta spettinata e lati sfumati: ammorbidisce la mandibola."],
+       ["Quiff spettinato","Volume con texture e movimento, non geometrico."],
+       ["Side part morbido","Riga laterale con lati a forbice, non rasati: linee meno dure."],
+       ["Capelli medi mossi","Lunghezza media con onde naturali che bilanciano gli angoli."]],
+    F:[["Onde morbide scalate","Strati intorno a viso e mandibola addolciscono gli angoli."],
+       ["Bob lungo sfilato","Punte sfilate sotto la mandibola, mai dritte all'altezza della mascella."],
+       ["Frangia laterale","Diagonale sulla fronte, spezza la linea orizzontale."],
+       ["Shag","Strati scomposti e movimento: il contrario della geometria squadrata."]],
+    avoidM:["Flat top e tagli molto geometrici","Riga centrale piatta"],
+    avoidF:["Bob dritto che termina sulla mandibola","Riga centrale con capelli piatti"],
+    beard:"Barba corta con bordi arrotondati, circle beard o stubble: evitare contorni squadrati sulla mascella."},
+  allungato:{
+    M:[["Fringe texturizzato","Frangia in avanti che accorcia la fronte."],
+       ["Caesar cut","Corto con frangia orizzontale: riduce la lunghezza percepita."],
+       ["Lati non rasati","Fade basso o forbice: lasciare un po' di volume ai lati allarga il viso."],
+       ["Taglio medio laterale","Lunghezza media pettinata di lato, senza altezza."]],
+    F:[["Bob al mento con volume","Volume laterale all'altezza del mento allarga il viso."],
+       ["Frangia piena o a tendina","Accorcia la fronte e riequilibra le proporzioni."],
+       ["Onde ampie medio-lunghe","Volume ai lati, mai liscio piatto."],
+       ["Shag con volume laterale","Strati che aprono il viso in larghezza."]],
+    avoidM:["Pompadour alto e volumi in cima","Skin fade molto alto"],
+    avoidF:["Liscio lunghissimo e piatto","Volume sulla sommità","Raccolti alti"],
+    beard:"Barba piena sui lati (box beard) per dare larghezza; evitare pizzetto lungo che allunga."},
+  cuore:{
+    M:[["Frangia laterale media","Copre parte della fronte e la restringe otticamente."],
+       ["Taglio medio spettinato","Lunghezza anche ai lati, niente altezza esagerata."],
+       ["Side part morbido","Classico ma con volume contenuto."],
+       ["Fringe lungo","Ciuffo in avanti che bilancia la fronte ampia."]],
+    F:[["Lob con volume in basso","Il volume all'altezza del mento compensa il mento stretto."],
+       ["Frangia a tendina","Riduce la larghezza della fronte."],
+       ["Onde dalla mandibola in giù","Movimento concentrato nella parte bassa del viso."],
+       ["Pixie lungo con frangia laterale","Corto ma con frangia che ammorbidisce la fronte."]],
+    avoidM:["Undercut molto rasato con volume in alto","Slick back stretto"],
+    avoidF:["Volumi alle tempie","Raccolti tirati indietro","Frangia corta dritta"],
+    beard:"Barba piena o corta ma uniforme sul mento: dà peso alla parte bassa del viso."},
+  diamante:{
+    M:[["Fringe texturizzato","Aggiunge larghezza alla fronte."],
+       ["Quiff morbido","Volume moderato in alto, non a punta."],
+       ["Lati non troppo corti","Lasciare lunghezza alle tempie riduce l'effetto zigomi."],
+       ["Side swept","Pettinato di lato con un po' di lunghezza sulla fronte."]],
+    F:[["Frangia laterale","Allarga la fronte e bilancia gli zigomi."],
+       ["Bob al mento","Allarga la parte bassa."],
+       ["Scalato con volume a nuca e mento","Riempie le zone strette del viso."],
+       ["Raccolto morbido con ciocche","Ciocche libere che incorniciano gli zigomi."]],
+    avoidM:["Lati rasati a zero che evidenziano gli zigomi","Punte alte e strette"],
+    avoidF:["Volume all'altezza degli zigomi","Riga centrale piatta"],
+    beard:"Barba piena o chin strap: allarga il mento e bilancia gli zigomi."},
+  triangolo:{
+    M:[["Pompadour con volume","Altezza e volume in alto bilanciano la mascella larga."],
+       ["Quiff con lati medi","Volume nella parte superiore e alle tempie."],
+       ["Riga laterale voluminosa","Allarga visivamente la fronte."],
+       ["Texture crop alto","Texture e volume concentrati sopra."]],
+    F:[["Pixie voluminoso in cima","Sposta l'attenzione verso l'alto."],
+       ["Bob con volume alle tempie","Allarga la fronte."],
+       ["Scalato con frangia","La frangia allarga la parte alta del viso."],
+       ["Onde dall'alto","Movimento che parte dalle radici."]],
+    avoidM:["Lati molto corti con poco volume sopra","Barba voluminosa sulla mascella"],
+    avoidF:["Lunghezze pesanti che finiscono sulla mandibola","Capelli piatti alla radice"],
+    beard:"Stubble corto o barba leggera: evitare volume sulla mascella che è già larga."},
+};
+const PALETTES = {
+  warm:{
+    light:[["Biondo miele","#C9A063"],["Biondo dorato","#D4AF6A"],["Rame chiaro","#C46A3A"],["Caramello","#A86F3E"],["Fragola","#C98B6B"]],
+    medium:[["Castano caramello","#8A5A33"],["Rame intenso","#A4502A"],["Cioccolato al latte","#6B4429"],["Balayage miele","#B5874F"],["Castano dorato","#7D5532"]],
+    dark:[["Cioccolato","#4A2E1F"],["Mogano caldo","#5E2F22"],["Riflessi caramello","#8A5A33"],["Nero morbido","#2A211C"],["Castano rame","#6A3522"]]},
+  cool:{
+    light:[["Biondo cenere","#B8AC8E"],["Biondo platino","#DCD3BF"],["Biondo beige","#C2AE8A"],["Castano cenere chiaro","#8C7B67"],["Biondo perla","#CFC6B4"]],
+    medium:[["Castano cenere","#6E5F50"],["Castano freddo","#5A4A3E"],["Biondo scuro cenere","#9A8B76"],["Borgogna","#5B2333"],["Castano tortora","#7A6A5C"]],
+    dark:[["Nero blu","#1C1C24"],["Espresso","#2E2420"],["Borgogna scuro","#4E1A28"],["Castano scurissimo","#2F2826"],["Prugna","#3E2033"]]},
+  neutral:{
+    light:[["Biondo sabbia","#C3A57A"],["Bronde","#9C7A57"],["Biondo naturale","#B89567"],["Castano chiaro","#86674A"],["Biondo beige","#C2AE8A"]],
+    medium:[["Castano nocciola","#7A5A40"],["Bronde","#9C7A57"],["Castano naturale","#5B4332"],["Riflessi sabbia","#A88A62"],["Castano tortora","#7A6A5C"]],
+    dark:[["Castano scuro naturale","#3B2A20"],["Cioccolato fondente","#3A2419"],["Nero naturale","#231D1A"],["Riflessi nocciola","#6A4B34"],["Espresso","#2E2420"]]},
+};
+const MEN_EXTRA=[["Grigio naturale","#8E8C88"],["Platino moda","#E2DCCD"]];
+const AVOID_COLOR = {
+  warm:"Evitare toni cenere, platino ghiaccio e nero blu: spengono una carnagione calda.",
+  cool:"Evitare dorati, arancio e rame acceso: su sottotono freddo tendono ad arrossare la pelle.",
+  neutral:"Sottotono neutro: regge sia toni caldi sia freddi, meglio restare entro 2 toni dalla base naturale.",
+};
+const MEN_COLOR = [
+  ["Blending dei bianchi","Copertura parziale che lascia un 20–30% di grigio: effetto naturale, ricrescita invisibile."],
+  ["Tonalizzazione","Ravviva il colore naturale verso le tonalità consigliate, dura 4–6 settimane."],
+  ["Mèches leggere","Schiariture sottili sulle punte, solo su capelli medi con texture."],
+];
+const UNDER_LABEL={warm:"Sottotono caldo",cool:"Sottotono freddo",neutral:"Sottotono neutro"};
+
+// ================= Stato =================
+const IS_PWA=!!document.querySelector('link[rel="manifest"]');
+let settings={nome:"",tel:"",addr:"",web:"",tipo:"M",logo:""};
+const blank=()=>({id:null,gender:settings.tipo||"M",shape:"ovale",probs:null,metrics:null,skin:null,eyes:null,hair:null,real:false,color:null,colorName:null,cuts:[],frames:0});
+let state=blank();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+// ================= Colore =================
+const lin=new Float32Array(256).map((_,i)=>{const c=i/255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4)});
+function srgbToLab(r,g,b){
+  const R=lin[Math.round(r)],G=lin[Math.round(g)],B=lin[Math.round(b)];
+  const X=(R*0.4124+G*0.3576+B*0.1805)/0.95047, Y=R*0.2126+G*0.7152+B*0.0722, Z=(R*0.0193+G*0.1192+B*0.9505)/1.08883;
+  const h=t=>t>0.008856?Math.cbrt(t):(7.787*t+16/116);
+  const fx=h(X),fy=h(Y),fz=h(Z);
+  return [116*fy-16,500*(fx-fy),200*(fy-fz)];
+}
+function labToSrgb(L,a,b){
+  const fy=(L+16)/116,fx=fy+a/500,fz=fy-b/200;
+  const g=t=>{const t3=t*t*t;return t3>0.008856?t3:(t-16/116)/7.787};
+  const X=g(fx)*0.95047,Y=g(fy),Z=g(fz)*1.08883;
+  const R=X*3.2406+Y*-1.5372+Z*-0.4986, G=X*-0.9689+Y*1.8758+Z*0.0415, B=X*0.0557+Y*-0.2040+Z*1.0570;
+  const f=c=>{c=c<=0.0031308?12.92*c:1.055*Math.pow(Math.max(c,0),1/2.4)-0.055;return Math.max(0,Math.min(255,c*255))};
+  return [f(R),f(G),f(B)];
+}
+const hex=(r,g,b)=>"#"+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,"0")).join("");
+const unhex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+const median=a=>{const s=[...a].sort((x,y)=>x-y);return s.length?s[Math.floor(s.length/2)]:0};
+function samplePixels(c2,pts,radius,filter){
+  const R=[],G=[],B=[];const W=c2.canvas.width,H=c2.canvas.height;
+  for(const p of pts){
+    const x0=Math.max(0,Math.round(p.x-radius)),y0=Math.max(0,Math.round(p.y-radius));
+    const w=Math.min(W-x0,Math.round(radius*2)),h=Math.min(H-y0,Math.round(radius*2));
+    if(w<=0||h<=0)continue;
+    const d=c2.getImageData(x0,y0,w,h).data;
+    for(let i=0;i<d.length;i+=4){
+      const px=x0+(i/4)%w,py=y0+Math.floor(i/4/w);
+      if(Math.hypot(px-p.x,py-p.y)>radius)continue;
+      if(filter&&!filter(d[i],d[i+1],d[i+2],px,py))continue;
+      R.push(d[i]);G.push(d[i+1]);B.push(d[i+2]);
+    }
+  }
+  if(R.length<8)return null;
+  return {r:median(R),g:median(G),b:median(B),n:R.length};
+}
+
+// ================= Analisi =================
+const PROTO={ // [lunghezza/larghezza, fronte/zigomi, mandibola/zigomi]
+  ovale:[1.20,0.86,0.80], rotondo:[1.07,0.86,0.84], quadrato:[1.10,0.90,0.92], allungato:[1.36,0.87,0.84],
+  cuore:[1.18,0.93,0.72], diamante:[1.20,0.78,0.74], triangolo:[1.14,0.78,0.90]};
+const SCALE=[0.07,0.045,0.045];
+const Pf=(lm,W,H)=>i=>({x:lm[i].x*W,y:lm[i].y*H});
+
+function geometry(lm,W,H){
+  const P=Pf(lm,W,H);const d=(a,b)=>{const p=P(a),q=P(b);return Math.hypot(p.x-q.x,p.y-q.y)};
+  const len=d(10,152),cheek=d(234,454),fore=d(54,284),jaw=d(172,397);
+  const mid=(P(234).x+P(454).x)/2;
+  const yaw=(P(1).x-mid)/cheek;
+  const e1=P(33),e2=P(263);let roll=Math.atan2(e2.y-e1.y,e2.x-e1.x)*180/Math.PI;
+  if(roll>90)roll-=180;if(roll<-90)roll+=180;
+  const eyeY=(e1.y+e2.y)/2;const pitch=(P(1).y-eyeY)/(P(152).y-eyeY)-0.42;
+  return {v:[len/cheek,fore/cheek,jaw/cheek],yaw,roll,pitch,foreheadShare:d(10,168)/len,widthFrac:cheek/W,cheek,len};
+}
+function classify(v){
+  const scores={};let tot=0;
+  for(const [k,p] of Object.entries(PROTO)){const dist=Math.hypot(...p.map((x,i)=>(v[i]-x)/SCALE[i]));scores[k]=Math.exp(-dist*dist/2);tot+=scores[k]}
+  for(const k in scores)scores[k]=tot?scores[k]/tot:1/7;
+  return Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+}
+function lighting(c2,lm){
+  const P=Pf(lm,c2.canvas.width,c2.canvas.height);
+  const cheek=Math.hypot(P(234).x-P(454).x,P(234).y-P(454).y),r=Math.max(3,cheek*0.03);
+  const L=p=>{const s=samplePixels(c2,[p],r);return s?srgbToLab(s.r,s.g,s.b)[0]:null};
+  const a=L(P(50)),b=L(P(280));
+  if(a==null||b==null)return null;
+  return {mean:(a+b)/2,diff:Math.abs(a-b)};
+}
+function colors(c2,lm,mask,geo){
+  const W=c2.canvas.width,H=c2.canvas.height,P=Pf(lm,W,H);
+  const d=(a,b)=>{const p=P(a),q=P(b);return Math.hypot(p.x-q.x,p.y-q.y)};
+  const cheek=d(234,454);
+  let skin=null;
+  const s=samplePixels(c2,[P(50),P(280),P(151),P(101),P(330)],cheek*0.035,(R,G,B,x,y)=>{const m=Math.max(R,G,B);return m>35&&m<250&&!(mask&&mask[y*W+x]>0.4)});
+  if(s){
+    const [L,a,b]=srgbToLab(s.r,s.g,s.b);
+    const ita=Math.atan2(L-50,b)*180/Math.PI, hue=Math.atan2(b,a)*180/Math.PI;
+    skin={hex:hex(s.r,s.g,s.b),tone:ita>55?"Molto chiara":ita>41?"Chiara":ita>28?"Intermedia":ita>10?"Olivastra":ita>-30?"Scura":"Molto scura",
+      depth:ita>41?"light":ita>10?"medium":"dark",under:hue>62?"warm":hue<52?"cool":"neutral"};
+  }
+  let eyes=null;
+  if(lm.length>477){
+    const ir=Math.max(2,(d(469,471)+d(474,476))/4),c1=P(468),c3=P(473);
+    const e=samplePixels(c2,[c1,c3],ir*0.85,(R,G,B,x,y)=>{const dd=Math.min(Math.hypot(x-c1.x,y-c1.y),Math.hypot(x-c3.x,y-c3.y));const m=Math.max(R,G,B);return dd>ir*0.35&&m>18&&m<235});
+    if(e){
+      const [L,a,b]=srgbToLab(e.r,e.g,e.b);const C=Math.hypot(a,b);
+      eyes={hex:hex(e.r,e.g,e.b),name:b<1?(C<7?"Grigi":"Azzurri"):(a<1.5&&b>4)?"Verdi":L<30?"Castano scuro":(L>42&&b>12)?"Nocciola":"Castani"};
+    }
+  }
+  let hair=null;
+  if(mask){
+    let n=0,R=0,G=0,B=0;const img=c2.getImageData(0,0,W,H).data;
+    for(let i=0;i<mask.length;i+=3){if(mask[i]>0.7){const k=i*4;R+=img[k];G+=img[k+1];B+=img[k+2];n++}}
+    const faceArea=geo.len*geo.cheek, frac=n*3/faceArea;
+    if(n<200||frac<0.12) hair={hex:"#8d8a86",name:"Rasato / pochi capelli",bald:true};
+    else{
+      const [L,a,b]=srgbToLab(R/n,G/n,B/n);const C=Math.hypot(a,b);
+      hair={hex:hex(R/n,G/n,B/n),name:L<20?"Nero":L<33?"Castano scuro":(a>12&&b>16)?"Ramato":L<47?"Castano":C<9?"Grigio / bianco":L<60?"Castano chiaro":"Biondo"};
+    }
+  }
+  return {skin,eyes,hair};
+}
+
+// ================= Canvas =================
+const cv=$("cv"),ctx=cv.getContext("2d",{willReadFrequently:true});
+const photo=document.createElement("canvas");photo.width=cv.width;photo.height=cv.height;
+const pctx=photo.getContext("2d",{willReadFrequently:true});
+const vid=$("vid");
+const OVAL=[10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109,10];
+let lmCur=null,hairMask=null,recolorCache={key:"",img:null},mode="analisi",hasPhoto=false;
+
+function fitDraw(c2,src,sw,sh,mirror){
+  const W=c2.canvas.width,H=c2.canvas.height,s=Math.max(W/sw,H/sh),dw=sw*s,dh=sh*s;
+  c2.save();c2.fillStyle="#0d0f12";c2.fillRect(0,0,W,H);
+  if(mirror){c2.translate(W,0);c2.scale(-1,1)}
+  c2.drawImage(src,(W-dw)/2,(H-dh)/2,dw,dh);c2.restore();
+}
+function drawOverlay(c2,lm){
+  const W=c2.canvas.width,H=c2.canvas.height,P=i=>[lm[i].x*W,lm[i].y*H];
+  c2.lineWidth=2.5;c2.strokeStyle="#d9a35a";c2.beginPath();
+  OVAL.forEach((i,k)=>{const [x,y]=P(i);k?c2.lineTo(x,y):c2.moveTo(x,y)});c2.stroke();
+  c2.setLineDash([7,6]);c2.lineWidth=1.5;c2.strokeStyle="rgba(255,255,255,.9)";
+  for(const [a,b] of [[54,284],[234,454],[172,397],[10,152]]){const p=P(a),q=P(b);c2.beginPath();c2.moveTo(...p);c2.lineTo(...q);c2.stroke()}
+  c2.setLineDash([]);c2.fillStyle="rgba(255,255,255,.5)";
+  for(let i=0;i<lm.length;i+=3){const [x,y]=P(i);c2.fillRect(x-0.8,y-0.8,1.6,1.6)}
+}
+function drawGuide(c2){
+  const W=c2.canvas.width,H=c2.canvas.height;
+  c2.save();c2.setLineDash([10,8]);c2.lineWidth=3;c2.strokeStyle="rgba(255,255,255,.55)";
+  c2.beginPath();c2.ellipse(W/2,H*0.45,W*0.27,H*0.27,0,0,Math.PI*2);c2.stroke();c2.restore();
+}
+function buildRecolor(color,intensity){
+  const key=color+"|"+intensity;
+  if(recolorCache.key===key)return recolorCache.img;
+  const W=photo.width,H=photo.height,src=pctx.getImageData(0,0,W,H),o=src.data,m=hairMask;
+  const [tL,ta,tb]=srgbToLab(...unhex(color));
+  let sum=0,n=0;
+  for(let i=0;i<m.length;i+=7){if(m[i]>0.6){const k=i*4;sum+=srgbToLab(o[k],o[k+1],o[k+2])[0];n++}}
+  const meanL=n?sum/n:40;
+  for(let i=0;i<m.length;i++){
+    const w=m[i];if(w<0.04)continue;
+    const k=i*4,[L,a,b]=srgbToLab(o[k],o[k+1],o[k+2]);
+    const nL=Math.max(0,Math.min(100,tL+(L-meanL)*0.85));
+    const [r,g,bb]=labToSrgb(nL,ta+a*0.12,tb+b*0.12);
+    const al=Math.min(1,w*1.15)*intensity;
+    o[k]=o[k]*(1-al)+r*al;o[k+1]=o[k+1]*(1-al)+g*al;o[k+2]=o[k+2]*(1-al)+bb*al;
+  }
+  recolorCache={key,img:src};return src;
+}
+function paint(){
+  if(!hasPhoto)return;
+  const W=cv.width,H=cv.height;
+  if(mode==="colore"&&state.color&&hairMask){
+    ctx.putImageData(buildRecolor(state.color,+$("intensity").value/100),0,0);
+    const sp=+$("split").value/100;
+    if(sp<1){
+      const x=Math.round(W*sp);
+      if(W-x>0)ctx.drawImage(photo,x,0,W-x,H,x,0,W-x,H);
+      ctx.fillStyle="#fff";ctx.fillRect(x-1,0,2,H);
+      ctx.font="600 20px Figtree, system-ui, sans-serif";ctx.fillStyle="rgba(10,12,14,.7)";
+      ctx.fillRect(10,H-44,84,32);ctx.fillRect(W-94,H-44,84,32);
+      ctx.fillStyle="#fff";ctx.fillText("Dopo",24,H-21);ctx.fillText("Prima",W-80,H-21);
+    }
+  }else{
+    ctx.drawImage(photo,0,0);
+    if(mode==="analisi"&&lmCur)drawOverlay(ctx,lmCur);
+  }
+}
+function setMode(m){
+  mode=m;
+  for(const [id,v] of [["mAnalisi","analisi"],["mColore","colore"],["mFoto","foto"]])$(id).setAttribute("aria-pressed",String(v===m));
+  $("colorTools").hidden=m!=="colore";
+  paint();
+}
+$("mAnalisi").onclick=()=>setMode("analisi");
+$("mColore").onclick=()=>{if(!state.color){const p=currentPalette();state.color=p[0][1];state.colorName=p[0][0];render()}setMode("colore")};
+$("mFoto").onclick=()=>setMode("foto");
+$("intensity").oninput=paint;$("split").oninput=paint;
+(()=>{let drag=false;const m=$("mirror");
+  const set=e=>{const r=m.getBoundingClientRect();$("split").value=Math.round(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*100);paint()};
+  m.addEventListener("pointerdown",e=>{if(mode!=="colore")return;drag=true;m.setPointerCapture(e.pointerId);set(e)});
+  m.addEventListener("pointermove",e=>{if(drag)set(e)});
+  m.addEventListener("pointerup",()=>drag=false);m.addEventListener("pointercancel",()=>drag=false);
+})();
+
+// ================= MediaPipe =================
+const statusEl=$("status");
+const setStatus=(t,err)=>{statusEl.textContent=t;statusEl.classList.toggle("err",!!err)};
+let landmarker=null,segmenter=null,ts=0;
+const nextTs=()=>{ts=Math.max(ts+1,performance.now());return ts};
+async function loadModels(){
+  try{
+    const base=new URL("vendor/",location.href).href;
+    const vision=await import(base+"vision_bundle.mjs");
+    const fileset={wasmLoaderPath:base+"vision_wasm_internal.js",wasmBinaryPath:base+"vision_wasm_internal.wasm"};
+    const fo=d=>({baseOptions:{modelAssetPath:base+"face_landmarker_model.wasm",delegate:d},runningMode:"VIDEO",numFaces:1});
+    try{landmarker=await vision.FaceLandmarker.createFromOptions(fileset,fo("GPU"))}
+    catch(e){landmarker=await vision.FaceLandmarker.createFromOptions(fileset,fo("CPU"))}
+    setStatus("Pronto. Avvia la fotocamera o carica una foto.");
+    try{
+      segmenter=await vision.ImageSegmenter.createFromOptions(fileset,{baseOptions:{modelAssetPath:base+"hair_segmenter_model.wasm",delegate:"CPU"},runningMode:"IMAGE",outputConfidenceMasks:true,outputCategoryMask:false});
+    }catch(e){console.warn("segmenter",e)}
+  }catch(e){
+    console.error(e);
+    setStatus("Riconoscimento viso non disponibile ("+(e.message||e)+"). Puoi scegliere la forma del viso a mano.",true);
+  }
+}
+const detect=src=>{if(!landmarker)return null;const r=landmarker.detectForVideo(src,nextTs());return r.faceLandmarks?.[0]||null};
+function segmentHair(){
+  if(!segmenter)return null;
+  try{
+    const res=segmenter.segment(photo);
+    const masks=res.confidenceMasks;if(!masks||!masks.length){res.close?.();return null}
+    const mk=masks[masks.length>1?1:0];
+    const arr=mk.getAsFloat32Array(),W=photo.width,H=photo.height;
+    let out;
+    if(mk.width!==W||mk.height!==H){
+      out=new Float32Array(W*H);const sx=mk.width/W,sy=mk.height/H;
+      for(let y=0;y<H;y++)for(let x=0;x<W;x++)out[y*W+x]=arr[Math.floor(y*sy)*mk.width+Math.floor(x*sx)];
+    }else out=new Float32Array(arr);
+    res.close?.();
+    return out;
+  }catch(e){console.warn(e);return null}
+}
+
+function finishAnalysis(lm,geos){
+  const g=geos.length>1?{...geos[0],v:[0,1,2].map(i=>median(geos.map(x=>x.v[i]))),foreheadShare:median(geos.map(x=>x.foreheadShare))}:geos[0];
+  lmCur=lm;hasPhoto=true;
+  hairMask=segmentHair();recolorCache.key="";
+  const c=colors(pctx,lm,hairMask,g);
+  const probs=classify(g.v);
+  Object.assign(state,{metrics:g,probs,shape:probs[0][0],skin:c.skin,eyes:c.eyes,hair:c.hair,real:true,color:null,colorName:null,cuts:[],frames:geos.length});
+  $("mColore").disabled=!hairMask||!!c.hair?.bald;
+  const warn=[];
+  if(Math.abs(g.yaw)>0.08||Math.abs(g.roll)>8)warn.push("viso non frontale");
+  const li=lighting(pctx,lm);
+  if(li&&(li.mean<30||li.mean>88))warn.push("luce "+(li.mean<30?"scarsa":"eccessiva"));
+  if(li&&li.diff>14)warn.push("luce non uniforme");
+  setStatus(warn.length?"Analisi fatta, ma attenzione: "+warn.join(", ")+". Per misure precise ripeti lo scatto.":"Analisi completata"+(geos.length>1?" su "+geos.length+" fotogrammi.":"."),!!warn.length);
+  setMode("analisi");render();
+}
+
+// ---- fotocamera
+let stream=null,raf=0,capturing=false;
+const camBtn=$("camBtn"),snapBtn=$("snapBtn");
+const setQ=(id,cls,txt)=>{const e=$(id);e.className="q "+cls;e.textContent=txt};
+async function startCam(){
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:1280},height:{ideal:960}},audio:false});
+    vid.srcObject=stream;await vid.play();
+    $("empty").hidden=true;$("quality").hidden=false;
+    camBtn.textContent="Ferma fotocamera";snapBtn.disabled=false;hasPhoto=false;
+    let frame=0;
+    const loop=()=>{
+      fitDraw(ctx,vid,vid.videoWidth,vid.videoHeight,true);
+      const lm=detect(cv);
+      if(lm){
+        if(frame++%6===0){const li=lighting(ctx,lm);if(li){const okL=li.mean>30&&li.mean<88&&li.diff<14;setQ("qLight",okL?"ok":"mid",li.mean<30?"Poca luce":li.mean>88?"Troppa luce":li.diff>=14?"Luce laterale":"Luce ok")}}
+        drawOverlay(ctx,lm);
+        const g=geometry(lm,cv.width,cv.height);
+        const pose=Math.max(Math.abs(g.yaw)/0.08,Math.abs(g.roll)/8,Math.abs(g.pitch)/0.12);
+        setQ("qPose",pose<1?"ok":pose<1.8?"mid":"bad",pose<1?"Posa frontale":"Guarda dritto");
+        setQ("qDist",g.widthFrac<0.3||g.widthFrac>0.75?"bad":"ok",g.widthFrac<0.3?"Avvicinati":g.widthFrac>0.75?"Allontanati":"Distanza ok");
+      }else{setQ("qPose","bad","Viso non trovato");drawGuide(ctx)}
+      raf=requestAnimationFrame(loop);
+    };
+    loop();
+    setStatus("Fotocamera attiva. Quando gli indicatori sono verdi premi Scatta.");
+  }catch(e){
+    setStatus("Fotocamera non disponibile. Controlla il permesso del browser, oppure usa «Carica foto».",true);
+  }
+}
+function stopCam(){cancelAnimationFrame(raf);stream&&stream.getTracks().forEach(t=>t.stop());stream=null;camBtn.textContent="Avvia fotocamera";snapBtn.disabled=true;$("quality").hidden=true}
+camBtn.onclick=()=>stream?stopCam():startCam();
+snapBtn.onclick=async()=>{
+  if(capturing||!stream)return;capturing=true;snapBtn.disabled=true;
+  cancelAnimationFrame(raf);setStatus("Scatto in corso, resta fermo…");
+  const frames=[];
+  for(let i=0;i<10;i++){
+    await new Promise(r=>requestAnimationFrame(r));
+    fitDraw(pctx,vid,vid.videoWidth,vid.videoHeight,true);
+    const lm=detect(photo);
+    if(lm){const g=geometry(lm,photo.width,photo.height);frames.push({lm,g,score:Math.abs(g.yaw)/0.08+Math.abs(g.roll)/8,img:pctx.getImageData(0,0,photo.width,photo.height)})}
+  }
+  stopCam();capturing=false;
+  if(!frames.length){hasPhoto=true;lmCur=null;paint();setStatus("Nessun viso trovato. Inquadra il viso frontalmente, con più luce.",true);return}
+  frames.sort((a,b)=>a.score-b.score);
+  pctx.putImageData(frames[0].img,0,0);
+  finishAnalysis(frames[0].lm,frames.map(f=>f.g));
+};
+$("file").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  stopCam();
+  const img=new Image();
+  img.onload=()=>{
+    fitDraw(pctx,img,img.naturalWidth,img.naturalHeight,false);
+    setTimeout(()=>URL.revokeObjectURL(img.src),0);$("empty").hidden=true;
+    hasPhoto=true;lmCur=null;ctx.drawImage(photo,0,0);
+    if(!landmarker){setStatus("Il riconoscimento non è ancora pronto: riprova tra qualche secondo.",true);return}
+    let lm=detect(photo);
+    if(!lm){setStatus("Nessun viso trovato nella foto. Serve una foto frontale e ben illuminata.",true);return}
+    // inquadra automaticamente il viso se nella foto è piccolo
+    const g0=geometry(lm,photo.width,photo.height);
+    if(g0.widthFrac<0.42){
+      const W=photo.width,H=photo.height,s=Math.max(W/img.naturalWidth,H/img.naturalHeight),ox=(W-img.naturalWidth*s)/2,oy=(H-img.naturalHeight*s)/2;
+      const P=Pf(lm,W,H),cx=(P(234).x+P(454).x)/2,cy=(P(10).y+P(152).y)/2-g0.len*0.15;
+      const fw=g0.cheek/0.5,fh=fw*H/W;
+      pctx.fillStyle="#0d0f12";pctx.fillRect(0,0,W,H);
+      pctx.drawImage(img,(cx-fw/2-ox)/s,(cy-fh/2-oy)/s,fw/s,fh/s,0,0,W,H);
+      let lm2=null;for(let i=0;i<3&&!lm2;i++)lm2=detect(photo);
+      if(lm2)lm=lm2;else fitDraw(pctx,img,img.naturalWidth,img.naturalHeight,false);
+    }
+    finishAnalysis(lm,[geometry(lm,photo.width,photo.height)]);
+  };
+  img.src=URL.createObjectURL(f);e.target.value="";
+};
+
+// ================= Scheda consulenza =================
+const report=$("report");
+const shapeSvg=(k,size=72)=>`<svg width="${size*0.83}" height="${size}" viewBox="0 0 100 120" aria-hidden="true"><path d="${SHAPES[k].path}" fill="var(--brass-soft)" stroke="var(--brass)" stroke-width="3"/></svg>`;
+function currentPalette(){
+  const under=state.skin?.under||"neutral",depth=state.skin?.depth||"medium";
+  const p=[...PALETTES[under][depth]];
+  if(state.gender==="M")p.push(...MEN_EXTRA);
+  return p;
+}
+function render(){
+  const g=state.gender,k=state.shape,S=SHAPES[k],C=CUTS[k];
+  const probs=state.probs?Object.fromEntries(state.probs):null;
+  const under=state.skin?.under||"neutral";
+  const pal=currentPalette(),m=state.metrics;
+  const canTry=hasPhoto&&hairMask&&!state.hair?.bald;
+  $("gM").setAttribute("aria-pressed",String(g==="M"));$("gF").setAttribute("aria-pressed",String(g==="F"));
+  report.innerHTML=`
+  <div class="card">
+    ${state.real?"":`<span class="example">Esempio · nessuna foto analizzata</span>`}
+    <div class="eyebrow">Forma del viso${state.real?" · stima":""}</div>
+    <div class="shape-head">${shapeSvg(k)}<div><h2>${S.label}</h2><p>${S.desc}</p></div></div>
+    <div class="chips" role="group" aria-label="Correggi la forma">
+      ${Object.keys(SHAPES).map(s=>`<button class="chip" data-shape="${s}" aria-pressed="${s===k}">${SHAPES[s].label}${probs?` <small>${Math.round(probs[s]*100)}%</small>`:""}</button>`).join("")}
+    </div>
+    <p class="note">Se la stima non ti convince, tocca la forma giusta: i consigli si aggiornano.</p>
+    ${m?`<div class="metrics">
+      <div class="metric"><b>${m.v[0].toFixed(2)}</b><span>Lunghezza / larghezza</span></div>
+      <div class="metric"><b>${m.v[1].toFixed(2)}</b><span>Fronte / zigomi</span></div>
+      <div class="metric"><b>${m.v[2].toFixed(2)}</b><span>Mandibola / zigomi</span></div>
+      <div class="metric"><b>${Math.round(m.foreheadShare*100)}%</b><span>Fronte${m.foreheadShare>0.34?" · alta, frangia consigliata":m.foreheadShare<0.25?" · bassa, meglio scoprirla":""}</span></div>
+    </div>`:""}
+  </div>
+  <div class="card">
+    <div class="eyebrow">Carnagione e dettagli</div>
+    <div class="traits">
+      <div class="trait"><i class="dot" style="background:${state.skin?.hex||"#c69c7b"}"></i><div><strong>${state.skin?.tone||"Intermedia"}</strong><span>${UNDER_LABEL[under]}</span></div></div>
+      <div class="trait"><i class="dot" style="background:${state.eyes?.hex||"#5a3d27"}"></i><div><strong>Occhi ${(state.eyes?.name||"castani").toLowerCase()}</strong><span>Colore iride</span></div></div>
+      <div class="trait"><i class="dot" style="background:${state.hair?.hex||"#3b2a20"}"></i><div><strong>${state.hair?.name||"Castano scuro"}</strong><span>Capelli attuali</span></div></div>
+    </div>
+    <p class="note">I colori sono letti dalla foto: con luce calda o colorata cambiano. Meglio luce bianca frontale, senza filtri.</p>
+  </div>
+  <div class="card">
+    <div class="eyebrow">Tagli consigliati · ${g==="M"?"uomo":"donna"} · tocca per scegliere</div>
+    <div class="cuts">${C[g].map(([n,p])=>{const on=state.cuts.includes(n);return `<button class="cut" data-cut="${esc(n)}" aria-pressed="${on}"><span class="tag">${on?"SCELTO":"ADATTO"}</span><strong>${esc(n)}</strong><p>${esc(p)}</p></button>`}).join("")}</div>
+    <h3>Da evitare</h3>
+    <ul class="avoid">${C[g==="M"?"avoidM":"avoidF"].map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    ${g==="M"?`<h3>Barba</h3><p style="margin:0">${esc(C.beard)}</p>`:""}
+  </div>
+  <div class="card">
+    <div class="eyebrow">Colore consigliato · ${UNDER_LABEL[under].toLowerCase()}, carnagione ${(state.skin?.tone||"intermedia").toLowerCase()}</div>
+    ${g==="M"?`<div class="cuts">${MEN_COLOR.map(([n,p])=>`<div class="cut"><strong>${n}</strong><p>${p}</p></div>`).join("")}</div>`:""}
+    <div class="palette">${pal.map(([n,h])=>`<button class="swatch" data-color="${h}" data-name="${esc(n)}" aria-pressed="${state.color===h}"><i style="background:${h}"></i><span>${esc(n)}<small>${h}</small></span></button>`).join("")}</div>
+    <p class="note">${AVOID_COLOR[under]}${state.eyes&&/Azzurri|Grigi|Verdi/.test(state.eyes.name)?" Con occhi chiari i riflessi "+(under==="warm"?"rame e miele":"cenere e beige")+" li fanno risaltare.":""}</p>
+    <p class="note">${canTry?"Tocca un colore per vederlo sui capelli del cliente nello specchio. Trascina sull'immagine per il prima / dopo.":hasPhoto&&state.hair?.bald?"Prova colore non disponibile: capelli troppo corti per essere riconosciuti.":"Dopo lo scatto puoi provare ogni colore direttamente sui capelli del cliente."}</p>
+  </div>`;
+  report.querySelectorAll("[data-shape]").forEach(b=>b.onclick=()=>{state.shape=b.dataset.shape;state.cuts=[];render()});
+  report.querySelectorAll("[data-cut]").forEach(b=>b.onclick=()=>{const n=b.dataset.cut;state.cuts=state.cuts.includes(n)?state.cuts.filter(x=>x!==n):[...state.cuts,n];render()});
+  report.querySelectorAll("[data-color]").forEach(b=>b.onclick=()=>{
+    const same=state.color===b.dataset.color;
+    state.color=same?null:b.dataset.color;state.colorName=same?null:b.dataset.name;render();
+    if(state.color&&!$("mColore").disabled)setMode("colore");else if(!state.color&&mode==="colore")setMode("analisi");
+  });
+}
+const setGender=x=>{state.gender=x;state.cuts=[];render()};
+$("gM").onclick=()=>setGender("M");$("gF").onclick=()=>setGender("F");
+
+function summaryText(r){
+  const C=CUTS[r.shape];
+  return [
+    `${settings.nome||"Specchio Studio"} · scheda consulenza ${new Date(r.ts).toLocaleDateString("it-IT")}`,
+    r.nome?`Cliente: ${r.nome}${r.tel?" · "+r.tel:""}`:"",
+    `Servizio: ${r.gender==="M"?"uomo":"donna"}`,
+    `Forma viso: ${SHAPES[r.shape].label}`,
+    r.skin?`Carnagione: ${r.skin.tone}, ${UNDER_LABEL[r.skin.under].toLowerCase()}`:"",
+    r.eyes?`Occhi: ${r.eyes.name}`:"", r.hair?`Capelli attuali: ${r.hair.name}`:"",
+    r.cuts.length?`Taglio scelto: ${r.cuts.join(", ")}`:`Tagli consigliati: ${C[r.gender].map(x=>x[0]).join(", ")}`,
+    `Da evitare: ${C[r.gender==="M"?"avoidM":"avoidF"].join("; ")}`,
+    r.gender==="M"?`Barba: ${C.beard}`:"",
+    r.color?`Colore scelto: ${r.colorName} (${r.color})`:"",
+    r.note?`Note: ${r.note}`:"",
+  ].filter(Boolean).join("\n");
+}
+
+// ================= Archivio (IndexedDB) =================
+const DB=(()=>{let dbp;
+  const open=()=>dbp||(dbp=new Promise((res,rej)=>{const r=indexedDB.open("specchio-studio",1);
+    r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore("consulenze",{keyPath:"id"});d.createObjectStore("impostazioni")};
+    r.onsuccess=()=>res(r.result);r.onerror=()=>{dbp=null;rej(r.error)}}));
+  const run=async(store,mode,fn)=>{const d=await open();return new Promise((res,rej)=>{const t=d.transaction(store,mode);const req=fn(t.objectStore(store));t.oncomplete=()=>res(req?.result);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)})};
+  return{all:()=>run("consulenze","readonly",s=>s.getAll()),put:v=>run("consulenze","readwrite",s=>s.put(v)),del:id=>run("consulenze","readwrite",s=>s.delete(id)),
+    getSet:k=>run("impostazioni","readonly",s=>s.get(k)),putSet:(k,v)=>run("impostazioni","readwrite",s=>s.put(v,k))};
+})();
+function faceCrop(src,lm,w=360){
+  if(!lm)return "";
+  const W=src.width,H=src.height;let x0=1,y0=1,x1=0,y1=0;
+  for(const p of lm){x0=Math.min(x0,p.x);y0=Math.min(y0,p.y);x1=Math.max(x1,p.x);y1=Math.max(y1,p.y)}
+  const cx=(x0+x1)/2*W,cy=(y0+y1)/2*H-(y1-y0)*H*0.12,fh=(y1-y0)*H*1.9,fw=fh*0.75;
+  const c=document.createElement("canvas");c.width=w;c.height=Math.round(w/0.75);
+  const c2=c.getContext("2d");c2.fillStyle="#0d0f12";c2.fillRect(0,0,c.width,c.height);
+  c2.drawImage(src,cx-fw/2,cy-fh/2,fw,fh,0,0,c.width,c.height);
+  return c.toDataURL("image/jpeg",0.82);
+}
+function recoloredCanvas(){
+  if(!state.color||!hairMask)return null;
+  const c=document.createElement("canvas");c.width=photo.width;c.height=photo.height;
+  c.getContext("2d").putImageData(buildRecolor(state.color,+$("intensity").value/100),0,0);return c;
+}
+function snapshot(withPhotos){
+  const ok=withPhotos&&$("cConsent").checked&&hasPhoto&&lmCur;
+  const rc=ok?recoloredCanvas():null;
+  return{id:state.id||("c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)),ts:Date.now(),
+    nome:$("cNome").value.trim(),tel:$("cTel").value.trim(),note:$("cNote").value.trim(),
+    gender:state.gender,shape:state.shape,probs:state.probs,metrics:state.metrics?{v:state.metrics.v,foreheadShare:state.metrics.foreheadShare}:null,
+    skin:state.skin,eyes:state.eyes,hair:state.hair,color:state.color,colorName:state.colorName,cuts:[...state.cuts],real:state.real,
+    consent:$("cConsent").checked,foto:ok?faceCrop(photo,lmCur):"",fotoColore:rc?faceCrop(rc,lmCur):""};
+}
+const msg=(id,t,err)=>{const e=$(id);if(!e)return;e.textContent=t;e.classList.toggle("err",!!err)};
+$("saveBtn").onclick=async()=>{
+  if(!$("cNome").value.trim()){msg("saveMsg","Inserisci il nome del cliente per salvarlo in archivio.",true);$("cNome").focus();return}
+  try{const r=snapshot(true);await DB.put(r);state.id=r.id;msg("saveMsg",`Salvato in archivio${r.foto?" con foto":" senza foto"}.`);navigator.storage?.persist?.().catch(()=>{})}
+  catch(e){msg("saveMsg","Salvataggio non riuscito: la memoria del browser non è disponibile qui.",true)}
+};
+$("copyBtn").onclick=async()=>{const t=summaryText(snapshot(false));try{await navigator.clipboard.writeText(t);msg("saveMsg","Testo copiato.")}catch(e){$("cNote").value=($("cNote").value?$("cNote").value+"\n\n":"")+t;$("cNote").select();msg("saveMsg","Copia automatica non riuscita: ho messo il testo nelle note, già selezionato.",true)}};
+function resetConsult(){
+  stopCam();state=blank();lmCur=null;hairMask=null;hasPhoto=false;recolorCache.key="";
+  for(const id of ["cNome","cTel","cNote"])$(id).value="";$("cConsent").checked=false;
+  ctx.fillStyle="#0d0f12";ctx.fillRect(0,0,cv.width,cv.height);$("empty").hidden=false;$("mColore").disabled=true;setMode("analisi");
+  msg("saveMsg","");setStatus(landmarker?"Pronto. Avvia la fotocamera o carica una foto.":"Caricamento modelli…");render();
+}
+$("newBtn").onclick=resetConsult;
+
+// ---- stampa
+function printSheet(r){
+  const C=CUTS[r.shape];
+  const pics=[r.foto&&`<figure style="margin:0"><img src="${r.foto}" alt=""><figcaption>Foto</figcaption></figure>`,
+    r.fotoColore&&`<figure style="margin:0"><img src="${r.fotoColore}" alt=""><figcaption>Prova colore: ${esc(r.colorName)}</figcaption></figure>`].filter(Boolean).join("");
+  $("printSheet").innerHTML=`
+  <div class="ph">${settings.logo?`<img src="${settings.logo}" alt="">`:""}<div><h1>${esc(settings.nome||"Specchio Studio")}</h1>
+  <div>${esc([settings.addr,settings.tel,settings.web].filter(Boolean).join(" · "))}</div></div></div>
+  <div><strong>Scheda consulenza</strong> · ${new Date(r.ts).toLocaleDateString("it-IT",{day:"numeric",month:"long",year:"numeric"})}${r.nome?` · ${esc(r.nome)}`:""}</div>
+  ${pics?`<div class="pics" style="margin-top:10px">${pics}</div>`:""}
+  <h2>Analisi del viso</h2>
+  <p>Forma: <strong>${SHAPES[r.shape].label}</strong>. ${SHAPES[r.shape].desc}</p>
+  ${r.skin?`<p><span class="sw" style="background:${r.skin.hex}"></span>Carnagione ${r.skin.tone.toLowerCase()}, ${UNDER_LABEL[r.skin.under].toLowerCase()}${r.eyes?` · occhi ${r.eyes.name.toLowerCase()}`:""}${r.hair?` · capelli ${r.hair.name.toLowerCase()}`:""}</p>`:""}
+  <h2>${r.cuts.length?"Taglio scelto":"Tagli consigliati"}</h2>
+  <ul>${(r.cuts.length?C[r.gender].filter(c=>r.cuts.includes(c[0])):C[r.gender]).map(([n,p])=>`<li><strong>${esc(n)}</strong>: ${esc(p)}</li>`).join("")}</ul>
+  <p>Da evitare: ${esc(C[r.gender==="M"?"avoidM":"avoidF"].join("; "))}</p>
+  ${r.gender==="M"?`<p>Barba: ${esc(C.beard)}</p>`:""}
+  <h2>Colore</h2>
+  ${r.color?`<p><span class="sw" style="background:${r.color}"></span><strong>${esc(r.colorName)}</strong></p>`:""}
+  <p>${esc(AVOID_COLOR[r.skin?.under||"neutral"])}</p>
+  ${r.note?`<h2>Note dello stilista</h2><p>${esc(r.note).replace(/\n/g,"<br>")}</p>`:""}
+  <p class="foot">Consulenza elaborata con analisi del viso sul dispositivo. Le indicazioni sono un supporto al lavoro dello stilista.</p>`;
+  setTimeout(()=>window.print(),80);
+}
+$("printBtn").onclick=()=>{
+  if(!IS_PWA){msg("saveMsg","La stampa funziona nell'app installata. Qui usa «Copia testo».",true);return}
+  printSheet(snapshot(true));
+};
+
+// ---- vista clienti
+let archive=[];
+async function loadArchive(){
+  try{archive=((await DB.all())||[]).sort((a,b)=>b.ts-a.ts)}catch(e){archive=[];msg("archMsg","Archivio non disponibile in questa vista del browser.",true)}
+  renderList();
+}
+function renderList(){
+  const q=$("q").value.trim().toLowerCase();
+  const rows=archive.filter(r=>!q||(r.nome||"").toLowerCase().includes(q)||(r.tel||"").includes(q));
+  $("clientList").innerHTML=rows.length?rows.map(r=>`<button class="client" data-id="${esc(r.id)}">
+    ${r.fotoColore||r.foto?`<img src="${r.fotoColore||r.foto}" alt="">`:`<span class="ph"></span>`}
+    <div><strong>${esc(r.nome||"Senza nome")}</strong><span>${new Date(r.ts).toLocaleDateString("it-IT")} · ${r.gender==="M"?"Uomo":"Donna"} · viso ${SHAPES[r.shape]?.label.toLowerCase()||""}</span>
+    <span>${esc((r.cuts||[]).join(", ")||"Nessun taglio scelto")}${r.colorName?" · "+esc(r.colorName):""}</span></div></button>`).join("")
+    :`<div class="card"><h3>${q?"Nessun cliente trovato":"Archivio vuoto"}</h3><p class="note">${q?"Prova con un altro nome o numero.":"Dopo una consulenza premi «Salva in archivio»: il cliente comparirà qui con foto, taglio e colore scelti."}</p></div>`;
+  $("clientList").querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>showDetail(b.dataset.id));
+}
+$("q").oninput=renderList;
+function showDetail(id){
+  const r=archive.find(x=>x.id===id);if(!r)return;
+  const box=$("clientDetail");box.hidden=false;
+  box.innerHTML=`<div class="card"><div class="row"><h2>${esc(r.nome||"Senza nome")}</h2><button class="ghost" id="dClose">Chiudi</button></div>
+  <div class="detail"><div class="pics2">${r.foto?`<figure><img src="${r.foto}" alt="Foto cliente">Prima</figure>`:""}${r.fotoColore?`<figure><img src="${r.fotoColore}" alt="Prova colore">${esc(r.colorName)}</figure>`:""}${!r.foto&&!r.fotoColore?`<p class="note">Salvato senza foto.</p>`:""}</div>
+  <div class="col"><dl class="kv">
+    <dt>Data</dt><dd>${new Date(r.ts).toLocaleString("it-IT")}</dd>${r.tel?`<dt>Telefono</dt><dd>${esc(r.tel)}</dd>`:""}
+    <dt>Servizio</dt><dd>${r.gender==="M"?"Uomo":"Donna"}</dd><dt>Forma viso</dt><dd>${SHAPES[r.shape]?.label||""}</dd>
+    ${r.skin?`<dt>Carnagione</dt><dd>${esc(r.skin.tone)}, ${UNDER_LABEL[r.skin.under]?.toLowerCase()||""}</dd>`:""}
+    ${r.eyes?`<dt>Occhi</dt><dd>${esc(r.eyes.name)}</dd>`:""}${r.hair?`<dt>Capelli</dt><dd>${esc(r.hair.name)}</dd>`:""}
+    <dt>Taglio</dt><dd>${esc((r.cuts||[]).join(", ")||"—")}</dd><dt>Colore</dt><dd>${r.color?`<i class="dot" style="display:inline-block;width:14px;height:14px;vertical-align:-2px;background:${esc(r.color)}"></i> ${esc(r.colorName)}`:"—"}</dd>
+    ${r.note?`<dt>Note</dt><dd>${esc(r.note).replace(/\n/g,"<br>")}</dd>`:""}
+  </dl>
+  <div class="actions"><button class="solid" id="dOpen">Nuova consulenza per questo cliente</button>${IS_PWA?`<button class="ghost" id="dPrint">Stampa / PDF</button>`:""}<button class="ghost danger" id="dDel">Elimina</button></div>
+  <p class="toast" id="dMsg"></p></div></div></div>`;
+  $("dClose").onclick=()=>{box.hidden=true};
+  if($("dPrint"))$("dPrint").onclick=()=>printSheet(r);
+  $("dOpen").onclick=()=>{resetConsult();$("cNome").value=r.nome||"";$("cTel").value=r.tel||"";state.gender=r.gender;render();go("consulenza")};
+  let armed=false;
+  $("dDel").onclick=async()=>{
+    if(!armed){armed=true;$("dDel").textContent="Conferma eliminazione";msg("dMsg","Premi di nuovo per eliminare definitivamente questa scheda.",true);return}
+    try{await DB.del(r.id);box.hidden=true;await loadArchive();msg("archMsg","Scheda eliminata.")}catch(e){msg("dMsg","Eliminazione non riuscita.",true)}
+  };
+  box.scrollIntoView({block:"start"});
+}
+$("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify({app:"specchio-studio",version:1,exported:new Date().toISOString(),settings,consulenze:archive})],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`specchio-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);msg("archMsg",`Backup di ${archive.length} schede creato.`);
+};
+$("importFile").onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;e.target.value="";
+  try{const data=JSON.parse(await f.text());if(data.app!=="specchio-studio")throw new Error("il file non è un backup di Specchio Studio");
+    for(const r of data.consulenze||[])await DB.put(r);await loadArchive();msg("archMsg",`Importate ${data.consulenze?.length||0} schede.`)}
+  catch(err){msg("archMsg","Importazione non riuscita: "+err.message,true)}
+};
+
+// ---- impostazioni
+const EMPTY_IMG="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+function applyBrand(){
+  $("brandName").textContent=settings.nome||"Specchio Studio";
+  $("brandSub").textContent=settings.nome?"Specchio Studio · consulenza taglio e colore":"Consulenza taglio e colore";
+  $("brandLogo").hidden=!settings.logo;if(settings.logo)$("brandLogo").src=settings.logo;
+  $("sLogoPrev").src=settings.logo||EMPTY_IMG;
+}
+function fillSettings(){$("sNome").value=settings.nome;$("sTel").value=settings.tel;$("sAddr").value=settings.addr;$("sWeb").value=settings.web;$("sTipo").value=settings.tipo}
+$("sLogo").onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const s=256,c=document.createElement("canvas");c.width=c.height=s;const k=Math.min(s/img.width,s/img.height);c.getContext("2d").drawImage(img,(s-img.width*k)/2,(s-img.height*k)/2,img.width*k,img.height*k);settings.logo=c.toDataURL("image/png");applyBrand();URL.revokeObjectURL(img.src);msg("setMsg","Logo caricato: premi «Salva impostazioni» per tenerlo.")};img.src=URL.createObjectURL(f);e.target.value=""};
+$("sLogoDel").onclick=()=>{settings.logo="";applyBrand()};
+$("sSave").onclick=async()=>{
+  Object.assign(settings,{nome:$("sNome").value.trim(),tel:$("sTel").value.trim(),addr:$("sAddr").value.trim(),web:$("sWeb").value.trim(),tipo:$("sTipo").value});
+  applyBrand();
+  try{await DB.putSet("salone",settings);msg("setMsg","Impostazioni salvate.")}catch(e){msg("setMsg","Non riesco a salvare qui: la memoria del browser non è disponibile.",true)}
+};
+
+// ---- navigazione
+const VIEWS=["consulenza","clienti","impostazioni"];
+function go(v){
+  if(!VIEWS.includes(v))v="consulenza";
+  for(const x of VIEWS)$("v-"+x).hidden=x!==v;
+  document.querySelectorAll(".tab").forEach(t=>{if(t.dataset.view===v)t.setAttribute("aria-current","page");else t.removeAttribute("aria-current")});
+  if(v!=="consulenza")stopCam();
+  if(v==="clienti"){$("clientDetail").hidden=true;loadArchive()}
+  if(v==="impostazioni")fillSettings();
+  if(location.hash!=="#"+v)try{history.replaceState(null,"","#"+v)}catch(e){}
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>go(t.dataset.view));
+window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
+
+// ---- privacy al primo avvio
+try{if(!localStorage.getItem("specchio-privacy"))$("privacy").hidden=false}catch(e){}
+$("pvOk").onclick=()=>{$("privacy").hidden=true;try{localStorage.setItem("specchio-privacy","1")}catch(e){}};
+
+// ---- PWA
+const installBtn=$("installBtn");let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBtn.hidden=false});
+installBtn.onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice.catch(()=>{});deferredPrompt=null;installBtn.hidden=true};
+window.addEventListener("appinstalled",()=>{installBtn.hidden=true});
+if(IS_PWA&&"serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").then(()=>{
+    const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+    if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone)$("iosHint").hidden=false;
+  }).catch(()=>{});
+}
+
+// ---- avvio
+ctx.fillStyle="#0d0f12";ctx.fillRect(0,0,cv.width,cv.height);
+render();go(location.hash.slice(1)||"consulenza");applyBrand();
+(async()=>{try{const s=await DB.getSet("salone");if(s){settings={...settings,...s};if(!state.real){state.gender=settings.tipo||"M";render()}applyBrand()}}catch(e){}})();
+loadModels();
+window.__specchio={get state(){return state},geometry,classify,get hairMask(){return hairMask}};
+</script>
+
+</body></html>
